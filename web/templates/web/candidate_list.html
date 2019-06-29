@@ -4,10 +4,7 @@
     <h1>Candidates</h1>
     {% if candidate_list %}
         <div class="d-flex flex-row justify-content-around flex-wrap">
-            {% for candidate in candidate_list %}
-                {% include "web/components/candidate_card.html" with candidate=candidate %}
-            {% endfor %}
-        </div>
+            {% include "web/components/candidate_table.html" with candidates=candidate_list show_team=True %}
     {% else %}
         <p>There are no candidates.</p>
     {% endif %}

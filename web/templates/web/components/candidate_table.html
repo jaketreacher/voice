@@ -1,0 +1,22 @@
+<table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Name</th>
+        {% if show_team %}
+            <th scope="col">Team Name</th>
+        {% endif %}
+        <th scope="col">Average Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for candidate in candidates %}
+        <tr>
+            <td><a href="{% url 'candidate-detail' candidate.pk %}">{{ candidate.user.get_full_name }}</a></td>
+            {% if show_team %}
+                <td><a href="{% url 'team-detail' candidate.team.pk %}">{{ candidate.team.name }}</a></td>
+            {% endif %}
+            <td>{{ candidate.average_score | floatformat:'0' | default:'N/A' }}</td>
+        </tr>  
+      {% endfor %}
+    </tbody>
+  </table>
