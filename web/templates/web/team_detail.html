@@ -1,0 +1,32 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+    <h1 class="text-center">{{ team.name }}</h1>
+    <div class="row">
+        <div class="col-sm-4 offset-sm-4">
+            {% include "web/components/cards/team_score.html" with team=team %}
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="text-center">
+        <h2>Mentors</h2>
+        {% if team.mentors.count %}
+            {% for mentor in team.mentors.all %}
+                <p>{{ mentor.user.get_full_name }}</p>
+            {% endfor %}
+        {% else %}
+            There are no mentors.
+        {% endif %}
+    </div>
+
+    <hr />
+
+    <h2>Candidates</h2>
+    {% if team.candidate_set.count %}
+        {% include "web/components/candidate_table.html" with candidates=team.candidate_set.all %}
+    {% else %}
+        There are no candidates.
+    {% endif %}
+{% endblock content %}

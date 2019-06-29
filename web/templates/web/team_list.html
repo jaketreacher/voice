@@ -1,0 +1,12 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+    <h1>Teams</h1>
+    {% if team_list %}
+        <div class="d-flex flex-row justify-content-around flex-wrap">
+            {% include "web/components/team_table.html" with teams=team_list %}
+        </div>
+    {% else %}
+        <p>There are no candidates.</p>
+    {% endif %}
+{% endblock content %}

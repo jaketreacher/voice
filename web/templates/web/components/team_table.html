@@ -1,0 +1,20 @@
+<table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Average Score</th>
+        <th scope="col">Candidates</th>
+        <th scope="col">Mentors</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for team in teams %}
+        <tr>
+            <td><a href="{% url 'team-detail' team.pk %}">{{ team.name }}</a></td>
+            <td>{{ team.average_score | floatformat:'0' | default:'N/A' }}</td>
+            <td>{{ team.candidate_set.count }}</td>
+            <td>{{ team.mentors.count }}</td>
+        </tr>  
+      {% endfor %}
+    </tbody>
+  </table>
