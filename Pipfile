@@ -6,12 +6,15 @@ verify_ssl = true
 [dev-packages]
 pytest-django = "*"
 flake8 = "*"
+factory-boy = "*"
+faker = "*"
 
 [packages]
 django = "<2.3"
 django-extensions = "*"
 django-compressor = "*"
 libsass = "*"
+
 
 [requires]
 python_version = "3.4"
