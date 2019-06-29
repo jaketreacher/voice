@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from django.views import generic
 
-# Create your views here.
+from .models import (
+    Candidate
+)
+
+
+class CandidateListView(generic.ListView):
+    model = Candidate
+
+
+class CandidateDetailView(generic.DetailView):
+    model = Candidate

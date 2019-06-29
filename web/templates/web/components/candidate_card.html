@@ -1,0 +1,7 @@
+<div class="card candidate__card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{ candidate.user.get_full_name }}</h5>
+    <p class="card-text">Average: {{ candidate.average_score | floatformat:'0' | default:'N/A' }}</p>
+    <a href="{% url 'candidate-detail' candidate.pk %}" class="btn btn-primary">View</a>
+  </div>
+</div>

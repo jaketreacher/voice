@@ -1,0 +1,18 @@
+<table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Song Name</th>
+        <th scope="col">Average Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for activity in activities %}
+        <tr>
+            <td>{{ activity.performance_date }}</td>
+            <td>{{ activity.song_name }}</td>
+            <td>{{ activity.average_score | floatformat:'0' | default:'N/A' }}</td>
+        </tr>  
+      {% endfor %}
+    </tbody>
+  </table>
