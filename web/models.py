@@ -22,6 +22,10 @@ class Candidate(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     team = models.ForeignKey('Team', on_delete=models.SET_NULL, blank=True, null=True)
 
+    @property
+    def average_score(self):
+        return self.activity_set.aggregate(avg=Avg('activityscore__score'))['avg']
+
     def __str__(self):
         return self.user.get_full_name()
 
@@ -50,6 +54,10 @@ class Team(models.Model):
     name = models.CharField(max_length=128, unique=True)
     mentors = models.ManyToManyField('Mentor', related_name='teams')
 
+    @property
+    def average_score(self):
+        return self.candidate_set.aggregate(avg=Avg('activity__activityscore__score'))['avg']
+
     def __str__(self):
         return self.name
 
@@ -62,9 +70,12 @@ class Activity(models.Model):
     song_name = models.CharField(max_length=128)
     performance_date = models.DateField()
 
+    class Meta:
+        ordering = ['-performance_date']
+
     @property
     def average_score(self):
-        return self.activityscore_set.aggregate(Avg('score'))['score__avg']
+        return self.activityscore_set.aggregate(avg=Avg('score'))['avg']
 
     def __str__(self):
         return self.song_name
