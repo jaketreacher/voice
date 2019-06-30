@@ -5,7 +5,7 @@
 
     <div class="row">
         <div class="col-sm-4 offset-sm-4">
-            {% include "web/components/cards/team_name.html" with team=candidate.team %}
+            {% include "web/components/cards/team_name.html" with team=team %}
         </div>
     </div>
 
@@ -14,7 +14,7 @@
             {% include "web/components/cards/candidate_score.html" with candidate=candidate %}
         </div>
         <div class="col-sm-4">
-            {% include "web/components/cards/team_score.html" with team=candidate.team %}
+            {% include "web/components/cards/team_score.html" with team=team %}
         </div>
     </div>
 
@@ -22,7 +22,7 @@
 
     <h2>Activities</h2>
     {% if candidate.activity_set.count %}
-        {% include "web/components/activity_table.html" with activities=candidate.activity_set.all %}
+        {% include "web/components/activity_table_basic.html" with activities=candidate.activity_set.add_average_score %}
     {% else %}
         There are no activities.
     {% endif %}

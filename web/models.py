@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, OuterRef, Subquery
 from django.core.validators import MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 
@@ -18,26 +18,36 @@ class User(AbstractUser):
         return Admin.objects.filter(user__id=self.id).exists()
 
 
+class CandidateSet(models.QuerySet):
+    def add_average_score(self):
+        subquery = Candidate.objects \
+            .values('id').annotate(avg=Avg('activity__activityscore__score')) \
+            .filter(id=OuterRef('id'))
+        return self.annotate(average_score=Subquery(subquery.values('avg')[:1]))
+
+
 class Candidate(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     team = models.ForeignKey('Team', on_delete=models.SET_NULL, blank=True, null=True)
 
-    @property
-    def average_score(self):
-        return self.activity_set.aggregate(avg=Avg('activityscore__score'))['avg']
+    objects = CandidateSet.as_manager()
 
     def __str__(self):
         return self.user.get_full_name()
 
 
+class MentorSet(models.QuerySet):
+    def add_num_scores(self):
+        return self.annotate(num_activityscore=Count('activityscore'))
+
+    def missing_scores(self):
+        return self.add_num_missing_scores().filter(num_activityscore__lt=Activity.objects.count())
+
+
 class Mentor(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
 
-    @staticmethod
-    def mentors_missing_scores():
-        return Mentor.objects \
-            .annotate(num_activityscore=Count('activityscore')) \
-            .filter(num_activityscore__lt=Activity.objects.count())
+    objects = MentorSet.as_manager()
 
     def __str__(self):
         return str(self.user)
@@ -50,19 +60,33 @@ class Admin(models.Model):
         return str(self.user)
 
 
+class TeamSet(models.QuerySet):
+    def add_average_score(self):
+        subquery = Team.objects \
+            .values('id').annotate(avg=Avg('candidate__activity__activityscore__score')) \
+            .filter(id=OuterRef('id'))
+        return self.annotate(average_score=Subquery(subquery.values('avg')[:1]))
+
+
 class Team(models.Model):
     name = models.CharField(max_length=128, unique=True)
     mentors = models.ManyToManyField('Mentor', related_name='teams')
 
-    @property
-    def average_score(self):
-        return self.candidate_set.aggregate(avg=Avg('activity__activityscore__score'))['avg']
+    objects = TeamSet.as_manager()
 
     def __str__(self):
         return self.name
 
     def __repr__(self):
         return '<%s: %s (%d)>' % (self.__class__.__name__, self.name, self.pk)
+
+
+class ActivitySet(models.QuerySet):
+    def add_average_score(self):
+        subquery = Activity.objects \
+            .values('id').annotate(avg=Avg('activityscore__score')) \
+            .filter(id=OuterRef('id'))
+        return self.annotate(average_score=Subquery(subquery.values('avg')[:1]))
 
 
 class Activity(models.Model):
@@ -73,9 +97,7 @@ class Activity(models.Model):
     class Meta:
         ordering = ['-performance_date']
 
-    @property
-    def average_score(self):
-        return self.activityscore_set.aggregate(avg=Avg('score'))['avg']
+    objects = ActivitySet.as_manager()
 
     def __str__(self):
         return self.song_name

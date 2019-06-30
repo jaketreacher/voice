@@ -70,7 +70,7 @@ class ActivityScoreFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ActivityScore
 
-    mentor = factory.Faker('random_element', elements=Mentor.mentors_missing_scores())
+    mentor = factory.Faker('random_element', elements=Mentor.objects.missing_scores())
     score = factory.Faker('pyint', min=0, max=100)
 
     @factory.lazy_attribute

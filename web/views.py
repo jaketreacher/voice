@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import OuterRef, Subquery
 from django.utils.decorators import method_decorator
 from django.views import generic
 
@@ -14,16 +15,24 @@ class CandidateListView(generic.ListView):
     template_name = 'candidate_list.html'
 
     def get_queryset(self):
+        queryset = Candidate.objects.add_average_score()
+
         if self.request.user.is_mentor:
-            return Candidate.objects.filter(team__mentors__user=self.request.user)
+            return queryset.filter(team__mentors__user=self.request.user)
 
         if self.request.user.is_admin:
-            return Candidate.objects.all()
+            return queryset
 
 
 @method_decorator(login_required, name='dispatch')
 class CandidateDetailView(generic.DetailView):
-    model = Candidate
+    queryset = Candidate.objects.add_average_score()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['team'] = Team.objects.add_average_score().filter(candidate=self.object).first()
+        context['title'] = self.object.user.get_full_name
+        return context
 
 
 @method_decorator(login_required, name='dispatch')
@@ -32,13 +41,15 @@ class TeamListView(generic.ListView):
     template_name = 'team_list.html'
 
     def get_queryset(self):
+        queryset = Team.objects.add_average_score()
         if self.request.user.is_mentor:
-            return Team.objects.filter(mentors__user=self.request.user)
+            return queryset.filter(mentors__user=self.request.user)
 
         if self.request.user.is_admin:
-            return Team.objects.all()
+            return queryset
 
 
 @method_decorator(login_required, name='dispatch')
 class TeamDetailView(generic.DetailView):
-    model = Team
+    queryset = Team.objects.add_average_score()
+

@@ -25,7 +25,7 @@
 
     <h2>Candidates</h2>
     {% if team.candidate_set.count %}
-        {% include "web/components/candidate_table.html" with candidates=team.candidate_set.all %}
+        {% include "web/components/candidate_table.html" with candidates=team.candidate_set.add_average_score %}
     {% else %}
         There are no candidates.
     {% endif %}
