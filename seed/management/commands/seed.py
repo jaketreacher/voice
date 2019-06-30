@@ -1,13 +1,14 @@
 from django.core.management.base import BaseCommand
 
-from web.models import User, Team, Admin
+from web.models import User, Team
 from seed.factory import (
     ActivityFactory,
     ActivityScoreFactory,
     AdminFactory,
     CandidateFactory,
     MentorFactory,
-    TeamFactory
+    TeamFactory,
+    UserFactory,
 )
 
 
@@ -16,33 +17,25 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--clean',
+            '--force',
             action='store_true',
-            help='Clear all models from the database before creating a new batch.'
-        )
-
-        parser.add_argument(
-            '--none',
-            action='store_true',
-            help='Run the seeder without actually seeding anything.'
+            help='Force the seeder to run, resulting in all data being lost.'
         )
 
     def handle(self, *args, **options):
-        if options['clean']:
-            User.objects.all().delete()
-            Team.objects.all().delete()
+        if not options['force']:
+            print('WARNING: Running this command will clear all data. Run with `--force` to continue')
+            return
 
-        if options['none']:
-            return self.test()
-
-        if not Admin.objects.count():
-            admin = AdminFactory(user__username='admin')
-            admin.user.set_password('password')
-            admin.user.save()
+        User.objects.all().delete()
+        Team.objects.all().delete()
 
         # randomly chosen values
+        AdminFactory()
         TeamFactory.create_batch(6)
+        UserFactory.reset_sequence(0)
         MentorFactory.create_batch(3)
+        UserFactory.reset_sequence(0)
         CandidateFactory.create_batch(18)
         ActivityFactory.create_batch(50)
         for _ in range(100):

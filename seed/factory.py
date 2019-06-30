@@ -23,7 +23,7 @@ class CandidateFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Candidate
 
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory, username=factory.Sequence(lambda n: 'candidate%d' % n))
     team = factory.Faker('random_element', elements=Team.objects.all())
 
 
@@ -31,7 +31,9 @@ class MentorFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Mentor
 
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(UserFactory,
+                              username=factory.Sequence(lambda n: 'mentor%d' % n),
+                              password=factory.PostGenerationMethodCall('set_password', 'password'))
 
     @factory.post_generation
     def teams(self, create, extracted, **kwargs):
@@ -46,7 +48,9 @@ class AdminFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Admin
 
-    user = factory.SubFactory(UserFactory, is_staff=True, is_superuser=True)
+    user = factory.SubFactory(UserFactory, is_staff=True, is_superuser=True,
+                              username=factory.Sequence(lambda n: 'admin%d' % n),
+                              password=factory.PostGenerationMethodCall('set_password', 'password'))
 
 
 class TeamFactory(factory.django.DjangoModelFactory):
