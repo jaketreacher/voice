@@ -1,8 +1,6 @@
-from django.contrib.auth.decorators import login_required
 from django.db.models import OuterRef, Subquery
-from django.utils.decorators import method_decorator
 from django.views import generic
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 
 from .forms import ActivityScoreForm
@@ -15,7 +13,14 @@ from .models import (
 )
 
 
-@method_decorator(login_required, name='dispatch')
+def login_redirect(request):
+    if request.user.is_mentor:
+        return redirect('candidates')
+    if request.user.is_admin:
+        return redirect('teams')
+    return redirect('home')
+
+
 class CandidateListView(generic.ListView):
     context_object_name = 'candidate_list'
     template_name = 'candidate_list.html'
@@ -30,7 +35,6 @@ class CandidateListView(generic.ListView):
             return queryset
 
 
-@method_decorator(login_required, name='dispatch')
 class CandidateDetailView(generic.DetailView):
     queryset = Candidate.objects.add_average_score()
 
@@ -41,7 +45,6 @@ class CandidateDetailView(generic.DetailView):
         return context
 
 
-@method_decorator(login_required, name='dispatch')
 class TeamListView(generic.ListView):
     context_object_name = 'team_list'
     template_name = 'team_list.html'
@@ -55,12 +58,10 @@ class TeamListView(generic.ListView):
             return queryset
 
 
-@method_decorator(login_required, name='dispatch')
 class TeamDetailView(generic.DetailView):
     queryset = Team.objects.add_average_score()
 
 
-@method_decorator(login_required, name='dispatch')
 class ActivityListView(generic.ListView):
     context_object_name = 'activity_list'
     template_name = 'activity_list.html'
@@ -77,7 +78,6 @@ class ActivityListView(generic.ListView):
 
 
 # TODO: Make this cleaner
-@method_decorator(login_required, name='dispatch')
 class ActivityFormView(generic.edit.FormView):
     template_name = 'web/activity_form.html'
     form_class = ActivityScoreForm

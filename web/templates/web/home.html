@@ -1,5 +1,29 @@
 {% extends "web/base.html" %}
+{% load static %}
 
 {% block content %}
-Home
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3">
+            <img src="{% static 'web/images/voice_logo.png' %}" width="100%">
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3">
+            <h1 class="text-center">Welcome!</h1>
+            {% if user.is_authenticated %}
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Your Details</h5>
+                        <p class="card-text">{{ user.get_full_name }}</p>
+                        <p class="card-text">{{ user.username }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center">
+                    Please log in to continue.
+                </p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock content %}
