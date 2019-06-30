@@ -55,6 +55,9 @@ class TeamListView(generic.ListView):
             return queryset.filter(mentors__user=self.request.user)
 
         if self.request.user.is_admin:
+            name_filter = self.request.GET.get('name', '')
+            if name_filter:
+                queryset = queryset.filter(name__contains=name_filter)
             return queryset
 
 

@@ -2,6 +2,15 @@
 
 {% block content %}
     <h1>Teams</h1>
+    {% if user.is_admin %}
+        <form class="form-inline" method="GET">
+            <div class="input-group">
+                <input autofocus type="text" class="form-control" name="name" placeholder="Team" value="{{ request.GET.name }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+        <br />
+    {% endif %}
     {% if team_list %}
         <div class="d-flex flex-row justify-content-around flex-wrap">
             {% include "web/components/team_table.html" with teams=team_list %}
