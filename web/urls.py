@@ -11,4 +11,8 @@ urlpatterns = [
 
     path('teams/', views.TeamListView.as_view(), name='teams'),
     path('team/<int:pk>', views.TeamDetailView.as_view(), name='team-detail'),
+
+    path('activities/', views.ActivityListView.as_view(), name='activities'),
+
+    path('activity/<int:pk>', views.ActivityFormView.as_view(), name='activity-form')
 ]

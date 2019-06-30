@@ -1,0 +1,28 @@
+<table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Song Name</th>
+        <th scope="col">Candidate Name</th>
+        <th scope="col">Average Score</th>
+        {% if request.user.is_mentor %}
+          <th scope="col">My Score</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for activity in activities %}
+        <tr>
+            <td>{{ activity.performance_date }}</td>
+            <td>{{ activity.song_name }}</td>
+            <td><a href="{% url 'candidate-detail' activity.candidate.pk %}">{{ activity.candidate.user.get_full_name }}</a></td>
+            <td>{{ activity.average_score | floatformat:'0' | default:'N/A' }}</td>
+            {% if request.user.is_mentor %}
+                  <td {% if activity.mentor_score is None %}class="table-warning"{% endif %}>
+                    <a href="{% url 'activity-form' activity.pk %}">{{ activity.mentor_score | default_if_none:'N/A' }}</a>
+                  </td>
+            {% endif %}
+        </tr>  
+      {% endfor %}
+    </tbody>
+  </table>

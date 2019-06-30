@@ -1,0 +1,10 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+    <h2>Activities</h2>
+    {% if activity_list %}
+        {% include "web/components/activity_table_full.html" with activities=activity_list %}
+    {% else %}
+        There are no activities.
+    {% endif %}
+{% endblock content %}
