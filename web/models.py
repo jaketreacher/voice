@@ -1,21 +1,60 @@
 from django.db import models
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from django.core.validators import MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 
 
+class UserQuerySet(models.QuerySet):
+    def candidate_only(self):
+        return self.filter(is_candidate=True)
+
+    def mentor_only(self):
+        return self.filter(is_mentor=True)
+
+    def admin_only(self):
+        return self.filter(is_admin=True)
+
+
+class CandidateManager(models.Manager):
+    def get_queryset(self):
+        return UserQuerySet(self.model, using=self._db).mentor_only()
+
+
+class MentorManager(models.Manager):
+    def get_queryset(self):
+        return UserQuerySet(self.model, using=self._db).candidate_only()
+
+
+class AdminManager(models.Manager):
+    def get_queryset(self):
+        return UserQuerySet(self.model, using=self._db).admin_only()
+
+
 class User(AbstractUser):
-    @property
-    def is_mentor(self):
-        return Mentor.objects.filter(user__id=self.id).exists()
+    is_candidate = models.BooleanField(default=False)
+    is_mentor = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
-    @property
-    def is_candidate(self):
-        return Candidate.objects.filter(user__id=self.id).exists()
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=~(Q(is_admin=True) & Q(is_candidate=True)),
+                name='admin_candidate_mutually_exclusive'
+            ),
+            models.CheckConstraint(
+                check=~(Q(is_admin=True) & Q(is_mentor=True)),
+                name='admin_mentor_mutually_exclusive'
+            ),
+            models.CheckConstraint(
+                check=~(Q(is_candidate=True) & Q(is_mentor=True)),
+                name='candidate_mentor_mutually_exclusive'
+            ),
+        ]
 
-    @property
-    def is_admin(self):
-        return Admin.objects.filter(user__id=self.id).exists()
+    objects = models.Manager()
+    candidates = CandidateManager()
+    mentors = MentorManager()
+    admin = AdminSet.as_manager()
 
 
 class Candidate(models.Model):
