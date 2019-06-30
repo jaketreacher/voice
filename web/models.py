@@ -41,7 +41,7 @@ class MentorSet(models.QuerySet):
         return self.annotate(num_activityscore=Count('activityscore'))
 
     def missing_scores(self):
-        return self.add_num_missing_scores().filter(num_activityscore__lt=Activity.objects.count())
+        return self.add_num_scores().filter(num_activityscore__lt=Activity.objects.count())
 
 
 class Mentor(models.Model):
