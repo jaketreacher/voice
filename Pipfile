@@ -4,10 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest-django = "*"
 flake8 = "*"
 factory-boy = "*"
 faker = "*"
+beautifulsoup4 = "*"
 
 [packages]
 django = "<2.3"
