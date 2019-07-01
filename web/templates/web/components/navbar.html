@@ -11,8 +11,6 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'teams' %}">Teams</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'activities' %}">Activities</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-        {% else %}
-            <li class="nav-item"><a class="nav-link active" href="{% url 'login' %}">Login</a></li>
         {% endif %}
     </ul>
 </div>
