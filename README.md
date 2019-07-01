@@ -18,3 +18,6 @@ Seeding the database will create various users. The username will be the user ty
 
 ## Running
 Run the server with `python manage.py runserver` and browse to the url `http://localhost:8000`.
+
+## Known Issues
+- The seeder may encounter an `IndexError`. Simply run it again and it should work.
