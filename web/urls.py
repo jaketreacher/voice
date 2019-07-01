@@ -16,7 +16,7 @@ urlpatterns = [
 
     path('activities/', login_required(views.ActivityListView.as_view()), name='activities'),
 
-    path('activity/<int:pk>', login_required(views.ActivityFormView.as_view()), name='activity-form'),
+    path('activity/<int:pk>/score', login_required(views.ActivityScoreFormView.as_view()), name='activity-form'),
 
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('accounts/login/rediect/', views.login_redirect, name='login-redirect'),

@@ -80,37 +80,17 @@ class ActivityListView(generic.ListView):
             return queryset
 
 
-# TODO: Make this cleaner
-class ActivityFormView(generic.edit.FormView):
-    template_name = 'web/activity_form.html'
+class ActivityScoreFormView(generic.edit.UpdateView):
+    model = Activity
+    template_name = 'web/activity_score_form.html'
     form_class = ActivityScoreForm
     success_url = reverse_lazy('activities')
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        activity = context['activity']
-        activityscore = activity.activityscore_set.filter(mentor__user=self.request.user).first()
-        if activityscore:
-            context['form'] = self.form_class(instance=activityscore)
-        return self.render_to_response(context)
-
-    def form_valid(self, form):
-        activity = Activity.objects.get(pk=self.kwargs['pk'])
+    def get_initial(self):
+        activity = self.object
         mentor = Mentor.objects.get(user=self.request.user)
-        score = self.request.POST['score']
-        activityscore = ActivityScore.objects.filter(activity=activity, mentor=mentor).first()
+        initial = { 'mentor_id': mentor.pk }
+        activityscore = activity.activityscore_set.filter(mentor=mentor).first()
         if activityscore:
-            activityscore.score = score
-        else:
-            activityscore = ActivityScore(
-                activity=activity,
-                mentor=mentor,
-                score=score
-            )
-        activityscore.save()
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['activity'] = get_object_or_404(Activity, pk=kwargs['pk'])
-        return context
+            initial['score'] = activityscore.score
+        return initial

@@ -21,5 +21,4 @@ Run the server with `python manage.py runserver` and browse to the url `http://l
 
 
 ## Known Issues
-- Submitting a score outside of the accepted range \[0..100\] will cause an error
 - No tests

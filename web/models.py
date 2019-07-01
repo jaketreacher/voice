@@ -46,6 +46,7 @@ class MentorSet(models.QuerySet):
 
 class Mentor(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
+    activities = models.ManyToManyField('Activity', through='ActivityScore')
 
     objects = MentorSet.as_manager()
 
@@ -93,6 +94,7 @@ class Activity(models.Model):
     candidate = models.ForeignKey('Candidate', on_delete=models.CASCADE)
     song_name = models.CharField(max_length=128)
     performance_date = models.DateField()
+    mentors = models.ManyToManyField('Mentor', through='ActivityScore')
 
     class Meta:
         ordering = ['-performance_date']
