@@ -12,9 +12,7 @@ beautifulsoup4 = "*"
 [packages]
 django = "<2.3"
 django-extensions = "*"
-django-compressor = "*"
-libsass = "*"
 django-crispy-forms = "*"
 
 [requires]
-python_version = "3.4"
+python_version = "3"

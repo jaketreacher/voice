@@ -4,7 +4,7 @@
 
 If using `pipenv`:  
 ```
-pipenv install
+pipenv install --dev
 ```
 
 Otherwise, create a virtual environment and run `pip install -r requirements.txt`.  
